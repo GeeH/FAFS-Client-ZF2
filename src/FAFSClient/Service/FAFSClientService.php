@@ -12,8 +12,9 @@ class FAFSClientService
     protected $counters = array();
     protected $timestamp;
 
-    public function __construct()
+    public function __construct($config)
     {
+        $this->config = $config;
         $this->timestamp = time();
     }
 
@@ -22,10 +23,10 @@ class FAFSClientService
      */
     public function dumpLog()
     {
-        $server_ip = '127.0.0.1';
-        $server_port = 6610;
+        $ipAddress = $this->config['ipAddress'];
+        $port = $this->config['port'];
         if ($socket = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP)) {
-            socket_sendto($socket, json_encode($this->counters), 1024, 0, $server_ip, $server_port);
+            socket_sendto($socket, json_encode($this->counters), 1024, 0, $ipAddress, $port);
         }
         return true;
     }

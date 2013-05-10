@@ -9,6 +9,7 @@ use Zend\EventManager\Event;
 use Zend\Mvc\Application;
 use Zend\Mvc\Controller\PluginManager;
 use Zend\Mvc\MvcEvent;
+use Zend\ServiceManager\ServiceManager;
 
 class Module
 {
@@ -61,8 +62,16 @@ class Module
     public function getServiceConfig()
     {
         return array(
-            'invokables' => array(
-                'FAFSClient\Service\FAFSClientService' => 'FAFSClient\Service\FAFSClientService',
+            'factories' => array(
+                'FAFSClient\Service\FAFSClientService' => function(ServiceManager $sm) {
+                    $config = $sm->get('config');
+                    if(isset($config['fafs-client'])) {
+                        $serviceConfig = $config['fafs-client'];
+                        $service = new FAFSClientService($serviceConfig);
+                        return $service;
+                    }
+                    throw new \InvalidArgumentException('No valid config found at key fafs-client');
+                },
             ),
             'initializers' => array(
                 'fafs' => function($service, $sm) {
