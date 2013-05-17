@@ -48,5 +48,18 @@ class FAFSClientService
         return true;
     }
 
+    /**
+     * @param $key
+     * @return bool
+     */
+    public function getKey($key)
+    {
+        foreach ($this->counters as $c => $counter) {
+            if ($counter[1] === $key) {
+                return $counter;
+            }
+        }
+        return false;
+    }
 
 }
